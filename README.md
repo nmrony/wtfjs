@@ -2,6 +2,8 @@
 
 [![WTFPL 2.0][license-image]][license-url]
 [![NPM version][npm-image]][npm-url]
+[![Patreon][patreon-image]][patreon-url]
+[![Buy Me A Coffee][bmc-image]][bmc-url]
 
 > A list of funny and tricky JavaScript examples
 
@@ -30,16 +32,23 @@ The source is available here: <https://github.com/denysdovhan/wtfjs>
 Currently, there are these translations of **wtfjs**:
 
 - [中文版](./README-zh-cn.md)
+- [हिंदी](./README-hi.md)
 - [Français](./README-fr-fr.md)
+- [Português do Brasil](./README-pt-br.md)
+- [Polski](./README-pl-pl.md)
+- [Italiano](./README-it-it.md)
+- [Russian](https://habr.com/ru/company/mailru/blog/335292/) (on Habr.com)
+- [한국어](./README-kr.md)
 
-[**Request another translation**][tr-request]
+[**Help translating to your language**][tr-request]
 
-[tr-request]: https://github.com/denysdovhan/wtfjs/issues/new?title=Translation%20Request:%20%5BPlease%20enter%20language%20here%5D&body=I%20am%20able%20to%20translate%20this%20language%20%5Byes/no%5D
+[tr-request]: https://github.com/denysdovhan/wtfjs/blob/master/CONTRIBUTING.md#translations
+
+**Note:** Translations are maintained by their translators. They may not contain every example, and existing examples may be outdated.
 
 <!-- prettier-ignore-start -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 # Table of Contents
 
 - [💪🏻 Motivation](#-motivation)
@@ -50,6 +59,7 @@ Currently, there are these translations of **wtfjs**:
   - [true is false](#true-is-false)
   - [baNaNa](#banana)
   - [`NaN` is not a `NaN`](#nan-is-not-a-nan)
+  - [`Object.is()` and `===` weird cases](#objectis-and--weird-cases)
   - [It's a fail](#its-a-fail)
   - [`[]` is truthy, but not `true`](#-is-truthy-but-not-true)
   - [`null` is falsy, but not `false`](#null-is-falsy-but-not-false)
@@ -99,7 +109,21 @@ Currently, there are these translations of **wtfjs**:
   - [Comparing `null` to `0`](#comparing-null-to-0)
   - [Same variable redeclaration](#same-variable-redeclaration)
   - [Default behavior Array.prototype.sort()](#default-behavior-arrayprototypesort)
+  - [resolve() won't return Promise instance](#resolve-wont-return-promise-instance)
+  - [`{}{}` is undefined](#-is-undefined)
+  - [`min` is greater than `max`](#min-is-greater-than-max)
+  - [`arguments` binding](#arguments-binding)
+  - [An `alert` from hell](#an-alert-from-hell)
+  - [An infinite timeout](#an-infinite-timeout)
+  - [A `setTimeout` object](#a-settimeout-object)
+  - [Double dot](#double-dot)
+  - [Extra Newness](#extra-newness)
+  - [Why you should use semicolons](#why-you-should-use-semicolons)
+  - [Split a string by a space](#split-a-string-by-a-space)
+  - [A stringified string](#a-stringified-string)
+  - [Non-strict comparison of a number to `true`](#non-strict-comparison-of-a-number-to-true)
 - [📚 Other resources](#-other-resources)
+- [🤝 Supporting](#-supporting)
 - [🎓 License](#-license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -118,6 +142,8 @@ If you are a beginner, you can use these notes to get a deeper dive into JavaScr
 If you are a professional developer, you can consider these examples as a great reference for all of the quirks and unexpected edges of our beloved JavaScript.
 
 In any case, just read this. You're probably going to find something new.
+
+> **⚠️ Note:** If you enjoy reading this document, please, [consider supporting the author of this collection](#-supporting).
 
 # ✍🏻 Notation
 
@@ -166,7 +192,7 @@ true;
 See also [`[]` is truthy, but not `true`](#-is-truthy-but-not-true).
 
 - [**12.5.9** Logical NOT Operator (`!`)](https://www.ecma-international.org/ecma-262/#sec-logical-not-operator)
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## `true` is not equal `![]`, but not equal `[]` too
 
@@ -223,7 +249,7 @@ false == ![]; // -> true
 false == false; // -> true
 ```
 
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## true is false
 
@@ -246,7 +272,7 @@ false == "false"; // -> false
 !!"true"; // -> true
 ```
 
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## baNaNa
 
@@ -291,6 +317,32 @@ Following the definition of `NaN` from the IEEE:
 >
 > &mdash; [“What is the rationale for all comparisons returning false for IEEE754 NaN values?”](https://stackoverflow.com/questions/1565164/1573715#1573715) at StackOverflow
 
+## `Object.is()` and `===` weird cases
+
+`Object.is()` determines if two values have the same value or not. It works similar to the `===` operator but there are a few weird cases:
+
+```javascript
+Object.is(NaN, NaN); // -> true
+NaN === NaN; // -> false
+
+Object.is(-0, 0); // -> false
+-0 === 0; // -> true
+
+Object.is(NaN, 0 / 0); // -> true
+NaN === 0 / 0; // -> false
+```
+
+### 💡 Explanation:
+
+In JavaScript lingo, `NaN` and `NaN` are the same value but they're not strictly equal. `NaN === NaN` being false is apparently due to historical reasons so it would probably be better to accept it as it is.
+
+Similarly, `-0` and `0` are strictly equal, but they're not the same value.
+
+For more details about `NaN === NaN`, see the above case.
+
+- [Here are the TC39 specs about Object.is](https://tc39.es/ecma262/#sec-object.is)
+- [Equality comparisons and sameness](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness) on MDN
+
 ## It's a fail
 
 You would not believe, but …
@@ -324,7 +376,23 @@ Thinking of a string as an array we can access its first character via `[0]`:
 "false"[0]; // -> 'f'
 ```
 
-The rest is obvious, but the `i` is tricky. The `i` in `fail` is grabbed by generating the string `'falseundefined'` and grabbing the element on index `['10']`
+The rest is obvious, but the `i` is tricky. The `i` in `fail` is grabbed by generating the string `'falseundefined'` and grabbing the element on index `['10']`.
+
+More examples:
+
+```js
++![]          // -> 0
++!![]         // -> 1
+!![]          // -> true
+![]           // -> false
+[][[]]        // -> undefined
++!![] / +![]  // -> Infinity
+[] + {}       // -> "[object Object]"
++{}           // -> NaN
+```
+
+- [Brainfuck beware: JavaScript is after you!](http://patriciopalladino.com/blog/2012/08/09/non-alphanumeric-javascript.html)
+- [Writing a sentence without using the Alphabet](https://bluewings.github.io/en/writing-a-sentence-without-using-the-alphabet/#weird-javascript-generator) — generate any phrase using JavaScript
 
 ## `[]` is truthy, but not `true`
 
@@ -340,7 +408,7 @@ An array is a truthy value, however, it's not equal to `true`.
 Here are links to the corresponding sections in the ECMA-262 specification:
 
 - [**12.5.9** Logical NOT Operator (`!`)](https://www.ecma-international.org/ecma-262/#sec-logical-not-operator)
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## `null` is falsy, but not `false`
 
@@ -362,7 +430,7 @@ At the same time, other falsy values, like `0` or `''` are equal to `false`.
 
 The explanation is the same as for previous example. Here's the corresponding link:
 
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## `document.all` is an object, but it is undefined
 
@@ -391,7 +459,7 @@ document.all == null; // -> true
 ### 💡 Explanation:
 
 > `document.all` used to be a way to access DOM elements, in particular with old versions of IE. While it has never been a standard it was broadly used in the old age JS code. When the standard progressed with new APIs (such as `document.getElementById`) this API call became obsolete and the standard committee had to decide what to do with it. Because of its broad use they decided to keep the API but introduce a willful violation of the JavaScript specification.
-> The reason why it responds to `false` when using the [Strict Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-strict-equality-comparison) with `undefined` while `true` when using the [Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison) is due to the willful violation of the specification that explicitly allows that.
+> The reason why it responds to `false` when using the [Strict Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-strict-equality-comparison) with `undefined` while `true` when using the [Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison) is due to the willful violation of the specification that explicitly allows that.
 >
 > &mdash; [“Obsolete features - document.all”](https://html.spec.whatwg.org/multipage/obsolete.html#dom-document-all) at WhatWG - HTML spec
 > &mdash; [“Chapter 4 - ToBoolean - Falsy values”](https://github.com/getify/You-Dont-Know-JS/blob/0d79079b61dad953bbfde817a5893a49f7e889fb/types%20%26%20grammar/ch4.md#falsy-objects) at YDKJS - Types & Grammar
@@ -433,6 +501,65 @@ new Foo() instanceof null;
 ### 💡 Explanation:
 
 This is not a part of the specification. It's just a bug that has now been fixed, so there shouldn't be a problem with it in the future.
+
+### Super constructor null of Foo is not a constructor
+
+It's continuation of story with previous bug in modern environment (tested with Chrome 71 and Node.js v11.8.0).
+
+```js
+class Foo extends null {}
+new Foo() instanceof null;
+// > TypeError: Super constructor null of Foo is not a constructor
+```
+
+### 💡 Explanation:
+
+This is not a bug because:
+
+```js
+Object.getPrototypeOf(Foo.prototype); // -> null
+```
+
+If the class has no constructor the call from prototype chain. But in the parent has no constructor. Just in case, I’ll clarify that `null` is an object:
+
+```js
+typeof null === "object";
+```
+
+Therefore, you can inherit from it (although in the world of the OOP for such terms would have beaten me). So you can't call the null constructor. If you change this code:
+
+```js
+class Foo extends null {
+  constructor() {
+    console.log("something");
+  }
+}
+```
+
+You see the error:
+
+```
+ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
+```
+
+And if you add `super`:
+
+```js
+class Foo extends null {
+  constructor() {
+    console.log(111);
+    super();
+  }
+}
+```
+
+JS throws an error:
+
+```
+TypeError: Super constructor null of Foo is not a constructor
+```
+
+- [An explanation of this issue](https://github.com/denysdovhan/wtfjs/pull/102#discussion_r259143582) by [@geekjob](https://github.com/geekjob)
 
 ## Adding arrays
 
@@ -507,7 +634,7 @@ Array equality is a monster in JS, as you can see below:
 
 ### 💡 Explanation:
 
-You should watch very carefully for the above examples! The behaviour is described in section [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison) of the specification.
+You should watch very carefully for the above examples! The behaviour is described in section [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison) of the specification.
 
 ## `undefined` and `Number`
 
@@ -607,13 +734,8 @@ parseInt(1 / 1999999); // -> 5
 Let's do some math:
 
 ```js
-true +
-  true(
-    // -> 2
-    true + true
-  ) *
-    (true + true) -
-  true; // -> 3
+true + true; // -> 2
+(true + true) * (true + true) - true; // -> 3
 ```
 
 Hmmm… 🤔
@@ -730,12 +852,8 @@ This is caused by IEEE 754-2008 standard for Binary Floating-Point Arithmetic. A
 A well-known joke. An addition of `0.1` and `0.2` is deadly precise:
 
 ```js
-0.1 +
-  0.2(
-    // -> 0.30000000000000004
-    0.1 + 0.2
-  ) ===
-  0.3; // -> false
+0.1 + 0.2; // -> 0.30000000000000004
+0.1 + 0.2 === 0.3; // -> false
 ```
 
 ### 💡 Explanation:
@@ -757,12 +875,8 @@ Number.prototype.isOne = function() {
 
 (1.0).isOne(); // -> true
 (1).isOne(); // -> true
-(2.0)
-  .isOne()(
-    // -> false
-    7
-  )
-  .isOne(); // -> false
+(2.0).isOne(); // -> false
+(7).isOne(); // -> false
 ```
 
 ### 💡 Explanation:
@@ -1048,15 +1162,9 @@ As we know, primitives don't have prototypes. However, if we try to get a value 
 This happens because when something doesn't have a prototype, it will be wrapped into a wrapper object using the `ToObject` method. So, step-by-step:
 
 ```js
-(1)
-  .__proto__(
-    // -> [Number: 0]
-    1
-  )
-  .__proto__.__proto__(
-    // -> {}
-    1
-  ).__proto__.__proto__.__proto__; // -> null
+(1).__proto__; // -> [Number: 0]
+(1).__proto__.__proto__; // -> {}
+(1).__proto__.__proto__.__proto__; // -> null
 ```
 
 Here is more information about `__proto__`:
@@ -1417,7 +1525,7 @@ Consider the example below:
 let f = function() {
   this.a = 1;
 };
-new f(); // -> { 'a': 1 }
+new f(); // -> f { 'a': 1 }
 ```
 
 Now, try do to the same with an arrow function:
@@ -1673,7 +1781,7 @@ true;
 ```
 
 - [**7.2.12** Abstract Relational Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-relational-comparison)
-- [**7.2.13** Abstract Equality Comparison](https://www.ecma-international.org/ecma-262/#sec-abstract-equality-comparison)
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 ## Same variable redeclaration
 
@@ -1704,8 +1812,8 @@ All definitions are merged into one definition.
 
 Imagine that you need to sort an array of numbers.
 
-```
-[ 10, 1, 3 ].sort() // -> [ 1, 10, 3 ]
+```js
+[10, 1, 3].sort(); // -> [ 1, 10, 3 ]
 ```
 
 ### 💡 Explanation:
@@ -1716,17 +1824,439 @@ The default sort order is built upon converting the elements into strings, then 
 
 ### Hint
 
-Pass `comparefn` if you try to sort anything but string.
+Pass `compareFn` if you try to sort anything but string.
+
+```js
+[10, 1, 3].sort((a, b) => a - b); // -> [ 1, 3, 10 ]
+```
+
+## resolve() won't return Promise instance
+
+```js
+const theObject = {
+  a: 7
+};
+const thePromise = new Promise((resolve, reject) => {
+  resolve(theObject);
+}); // Promise instance object
+
+thePromise.then(value => {
+  console.log(value === theObject); // > true
+  console.log(value); // > { a: 7 }
+});
+```
+
+The `value` which is resolved from `thePromise` is exactly `theObject`.
+
+How about input another `Promise` into the `resolve` function?
+
+```js
+const theObject = new Promise((resolve, reject) => {
+  resolve(7);
+}); // Promise instance object
+const thePromise = new Promise((resolve, reject) => {
+  resolve(theObject);
+}); // Promise instance object
+
+thePromise.then(value => {
+  console.log(value === theObject); // > false
+  console.log(value); // > 7
+});
+```
+
+### 💡 Explanation:
+
+> This function flattens nested layers of promise-like objects (e.g. a promise that resolves to a promise that resolves to something) into a single layer.
+
+- [Promise.resolve() on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)
+
+The specification is [ECMAScript 25.6.1.3.2 Promise Resolve Functions](https://tc39.es/ecma262/#sec-promise-resolve-functions). But it is not quite human-friendly.
+
+## `{}{}` is undefined
+
+Write them in the console. They will return the value defined in the last object.
+
+```js
+{}{}; // -> undefined
+{}{}{}; // -> undefined
+{}{}{}{}; // -> undefined
+{foo: 'bar'}{}; // -> 'bar'
+{}{foo: 'bar'}; // -> 'bar'
+{}{foo: 'bar'}{}; // -> 'bar'
+{a: 'b'}{c:' d'}{}; // -> 'd'
+{a: 'b', c: 'd'}{}; // > SyntaxError: Unexpected token ':'
+({}{}); // > SyntaxError: Unexpected token '{'
+```
+
+### 💡 Explanation:
+
+When inspecting each `{}`, they returns undefined. If you inspect `{foo: 'bar'}{}`, you will find `{foo: 'bar'}` is `'bar'`.
+
+There are two meanings for `{}`: an object or a block. For example, the `{}` in `() => {}` means block. So we need to use `() => ({}`) to return an object.
+
+Let's use `{foo: 'bar'}` as a block. Write this snippet in your console:
+
+```js
+if (true) {
+  foo: "bar";
+} // -> 'bar'
+```
+
+Surprisingly, it behaviors the same! You can guess here that `{foo: 'bar'}{}` is a block.
+
+## `min` is greater than `max`
+
+I find this example hilarious:
+
+```js
+Math.min() > Math.max(); // -> true
+Math.min() < Math.max(); // -> false
+```
+
+### 💡 Explanation:
+
+This is a simple one. Let's consider each part of this expression separately:
+
+```js
+Math.min(); // -> Infinity
+Math.max(); // -> -Infinity
+Infinity > -Infinity; // -> true
+```
+
+Why so? Well, `Math.max()` is not the same thing as `Number.MAX_VALUE`. It does not return the largest possible number.
+
+`Math.max` takes arguments, tries to convert the to numbers, compares each one and then returns the largest remaining. If no arguments are given, the result is −∞. If any value is `NaN`, the result is `NaN`.
+
+The opposite is happening for `Math.min`. `Math.min` returns ∞, if no arguments are given.
+
+- [**15.8.2.11** Math.max](https://262.ecma-international.org/5.1/#sec-15.8.2.11)
+- [**15.8.2.11** Math.min](https://262.ecma-international.org/5.1/#sec-15.8.2.12)
+- [Why is `Math.max()` less than `Math.min()`?](https://charlieharvey.org.uk/page/why_math_max_is_less_than_math_min)
+
+## `arguments` binding
+
+Consider this function:
+
+```js
+function a(x) {
+  arguments[0] = "hello";
+  console.log(x);
+}
+
+a(); // > undefined
+a(1); // > "hello"
+```
+
+### 💡 Explanation:
+
+`arguments` is an Array-like object that contains the values of the arguments passed to that function. When no arguments are passed, then there's no `x` to override.
+
+- [The arguments object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) on MDN
+
+## An `alert` from hell
+
+This on is literally from hell:
+
+```js
+[666]["\155\141\160"]["\143\157\156\163\164\162\165\143\164\157\162"](
+  "\141\154\145\162\164(666)"
+)(666); // alert(666)
+```
+
+### 💡 Explanation:
+
+This one is based on octal escape sequences and multiple strings.
+
+Any character with a character code lower than 256 (i.e. any character in the extended ASCII range) can be escaped using its octal-encoded character code, prefixed with `\`. An example above is basically and `alert` ecoded by octal escape sequances.
+
+- [Martin Kleppe tweet about it](https://twitter.com/aemkei/status/897172907222237185)
+- [JavaScript character escape sequences](https://mathiasbynens.be/notes/javascript-escapes#octal)
+- [Multi-Line JavaScript Strings](https://davidwalsh.name/multiline-javascript-strings)
+
+## An infinite timeout
+
+Guess what would happen if we set an infinite timeout?
+
+```js
+setTimeout(() => console.log("called"), Infinity); // -> <timeoutId>
+// > 'called'
+```
+
+It will executed immediately instead of infinity delay.
+
+### 💡 Explanation:
+
+Usually, runtime stores the delay as a 32-bit signed integer internally. This causes an integer overflow, resulting in the timeout being executed immediately.
+
+For example, in Node.js we will get this warning:
 
 ```
-[ 10, 1, 3 ].sort((a, b) => a - b) // -> [ 1, 3, 10 ]
+(node:1731) TimeoutOverflowWarning: Infinity does not fit into a 32-bit signed integer.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
 ```
+
+- [WindowOrWorkerGlobalScope.setTimeout()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) on MDN
+- [Node.js Documentation on Timers](https://nodejs.org/api/timers.html#timers_settimeout_callback_delay_args)
+- [Timers](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html) on W3C
+
+## A `setTimeout` object
+
+Guess what would happen if we set an callback that's not a function to `setTimeout`?
+
+```js
+setTimeout(123, 100); // -> <timeoutId>
+// > 'called'
+```
+
+This is fine.
+
+```js
+setTimeout('{a: 1}', 100); // -> <timeoutId>
+// > 'called'
+```
+
+This is also fine.
+
+```js
+setTimeout({a: 1}, 100); // -> <timeoutId>
+// > 'Uncaught SyntaxError: Unexpected identifier               setTimeout (async) (anonymous) @ VM__:1'
+```
+
+This throws an **SyntaxError**.
+
+Note that this can easily happen if your function returns an object and you call it here instead of passing it! What if the content - policy is set to `self`?
+
+```js
+setTimeout(123, 100); // -> <timeoutId>
+// > console.error("[Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'report-sample' 'self' ")
+```
+
+The console refuses to run it at all!
+
+### 💡 Explanation:
+
+`WindowOrWorkerGlobalScope.setTimeout()` can be called with `code` as first argument, which will be passed on to `eval`, which is bad. Eval will coerce her input to String, and evaluate what is produced, so Objects becomes `'[object Object]'` which has hmmm ...  an `'Unexpected identifier'`!
+
+- [eval()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) on MDN (don't use this)
+- [WindowOrWorkerGlobalScope.setTimeout()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) on MDN
+- [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
+- [Timers](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html) on W3C
+
+## Double dot
+
+Let's try to coerce a number to a string:
+
+```js
+27.toString() // > Uncaught SyntaxError: Invalid or unexpected token
+```
+
+Maybe we should try with two dots?
+
+```js
+27..toString(); // -> '27'
+```
+
+But why doesn't first example work?
+
+### 💡 Explanation:
+
+It's just a language grammar limitation.
+
+The `.` character presents an ambiguity. It can be understood to be the member operator, or a decimal, depending on its placement.
+
+The specification's interpretation of the `.` character in that particular position is that it will be a decimal. This is defined by the numeric literal syntax of ECMAScript.
+
+You must always use parenthesis or an addition dot to make such expression valid.
+
+```js
+(27).toString(); // -> '27'
+// or
+27..toString(); // -> '27'
+```
+
+- [Usage of toString in JavaScript](https://stackoverflow.com/questions/6853865/usage-of-tostring-in-javascript/6853910#6853910) on StackOverflow
+- [Why does 10..toString() work, but 10.toString() does not?](https://stackoverflow.com/questions/13149282/why-does-10-tostring-work-but-10-tostring-does-not/13149301#13149301)
+
+## Extra Newness
+
+I present this as an oddity for your amusement.
+
+```js
+class Foo extends Function {
+  constructor(val) {
+    super();
+    this.prototype.val = val;
+  }
+}
+
+new new Foo(":D")().val; // -> ':D'
+```
+
+### 💡 Explanation:
+
+Constructors in JavaScript are just functions with some special treatment. By extending Function using the class syntax you create a class that, when instantiated, is now a function, which you can then additionally instantiate.
+
+While not exhaustively tested, I believe the last statement can be analyzed thus:
+
+```js
+new new Foo(":D")().val(new newFooInstance()).val;
+veryNewFooInstance.val;
+// -> ':D'
+```
+
+As a tiny addendum, doing `new Function('return "bar";')` of course creates a function with the body `return "bar";`. Since `super()` in the constructor of our `Foo` class is calling `Function`'s constructor, it should come as no surprise now to see that we can additionally manipulate things in there.
+
+```js
+class Foo extends Function {
+  constructor(val) {
+    super(`
+      this.val = arguments[0];
+    `);
+    this.prototype.val = val;
+  }
+}
+
+var foo = new new Foo(":D")("D:");
+foo.val; // -> 'D:'
+delete foo.val; // remove the instance prop 'val', deferring back to the prototype's 'val'.
+foo.val; // -> ':D'
+```
+
+- [Class Extends Function: Extra Newness](https://github.com/denysdovhan/wtfjs/issues/78)
+
+## Why you should use semicolons
+
+Writing some standard JavaScript… and then BOOM!
+
+```js
+class SomeClass {
+  ["array"] = []
+  ["string"] = "str"
+}
+
+new SomeClass().array; // -> 'str'
+```
+
+What the …?
+
+### 💡 Explanation:
+
+Once again, this is all thanks to the Automatic Semicolon Insertion.
+
+An example above is basically the same as:
+
+```js
+class SomeClass {
+  ["array"] = ([]["string"] = "str");
+}
+```
+
+You basically assign a string `str` into an `array` property.
+
+- [An original tweet with an example](https://twitter.com/SeaRyanC/status/1148726605222535168) by Ryan Cavanaugh
+- [TC39 meeting when they debated about it](https://github.com/tc39/notes/blob/master/meetings/2017-09/sept-26.md)
+
+## Split a string by a space
+
+Have you ever tried to split a string by a space?
+
+```js
+"".split(""); // -> []
+// but…
+"".split(" "); // -> [""]
+```
+
+### 💡 Explanation:
+
+This is expected behaviour. It's responsibility is to divide the input string every time a separator occurs in that input string. When you pass in an empty string it'll never find a separator and thus return that string.
+
+Let's quote the specification:
+
+> The substrings are determined by searching from left to right for occurrences of `separator`; these occurrences are not part of any String in the returned array, but serve to divide up the String value.
+
+- [**22.1.3.21** String.prototype.split](https://tc39.es/ecma262/#sec-string.prototype.split)
+- [An original tween with an example](https://twitter.com/SeaRyanC/status/1331656278104440833) by Ryan Cavanaugh
+- [A tween with an explanation](https://twitter.com/kl13nt/status/1331742810932916227?s=20) by Nabil Tharwat
+
+## A stringified string
+
+This caused a bug that I've been solving for a few days:
+
+```js
+JSON.stringify("production") === "production"; // -> false
+```
+
+### 💡 Explanation:
+
+Let's see what `JSON.stringify` is returning:
+
+```js
+JSON.stringify("production"); // -> '"production"'
+```
+
+It is actually a stringified string, so it's true:
+
+```js
+'"production"' === "production"; // -> false
+```
+
+- [ECMA-404 The JSON Data Interchange Standard.](https://www.json.org/json-en.html)
+
+## Non-strict comparison of a number to `true`
+
+```js
+1 == true; // -> true
+// but…
+Boolean(1.1); // -> true
+1.1 == true; // -> false
+```
+
+### 💡 Explanation:
+
+According to the specification:
+
+> The comparison x == y, where x and y are values, produces true or false. Such a comparison is performed as follows:
+>
+> 4. If `Type(x)` is Number and `Type(y)` is String, return the result of the comparison `x == ! ToNumber(y)`.
+
+So this comparison is performed like this:
+
+```js
+1 == true;
+1 == Number(true);
+1 == 1; // -> true
+// but…
+1.1 == true;
+1.1 == Number(true);
+1.1 == 1; // -> false
+```
+
+- [**7.2.15** Abstract Equality Comparison](https://262.ecma-international.org/11.0/index.html#sec-abstract-equality-comparison)
 
 # 📚 Other resources
 
 - [wtfjs.com](http://wtfjs.com/) — a collection of those very special irregularities, inconsistencies and just plain painfully unintuitive moments for the language of the web.
 - [Wat](https://www.destroyallsoftware.com/talks/wat) — A lightning talk by Gary Bernhardt from CodeMash 2012
 - [What the... JavaScript?](https://www.youtube.com/watch?v=2pL28CcEijU) — Kyle Simpsons talk for Forward 2 attempts to “pull out the crazy” from JavaScript. He wants to help you produce cleaner, more elegant, more readable code, then inspire people to contribute to the open source community.
+- [Zeros in JavaScript](http://zero.milosz.ca/) — a comparison table of `==`, `===`, `+` and `*` in JavaScript.
+
+# 🤝 Supporting
+
+Hi! I work on this project in my spare time, in addition to my primary job. I hope you enjoy reading it. If you do, please, consider supporting me 🙏.
+
+Every single donation is important. Your donation is gonna make a clear statement: My work is valued.
+
+**🙏 Thank you for your support! 🙏**
+
+| Service          |                     Link                     |                                                                   Action                                                                   |
+| ---------------- | :------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------: |
+| **Patreon**      |        [Become a patron][patreon-url]        | <a href="https://patreon.com/denysdovhan"><img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="120px"></a> |
+| **BuyMeACoffee** |     [Buy me a cup of ☕️ or 🥤][bmc-url]     |    <a href="https://buymeacoffee.com/denysdovhan"><img src="https://cdn.buymeacoffee.com/buttons/default-black.png" width="120px"></a>     |
+| **Bitcoin**      |     `1EJsKs6rPsqa7QLoVLpe3wgcdL9Q8WmDxE`     |      <img src="https://user-images.githubusercontent.com/3459374/107130426-0ae4f800-68d6-11eb-9b86-15bf33467615.png" width="120px"/>       |
+| **Ethereum**     | `0x6aF39C917359897ae6969Ad682C14110afe1a0a1` |      <img src="https://user-images.githubusercontent.com/3459374/107130370-55b24000-68d5-11eb-93f5-075355c7fcd4.png" width="120px"/>       |
+
+> **⚠️ Note:** I live in Ukraine and services like PayPal and Stripe don't work with Ukrainian bank accounts. This means there's no way for me to set up GitHub Sponsors, OpenCollective, or services relied on them. Sorry, those are the only ways you can support me for now.
 
 # 🎓 License
 
@@ -1738,3 +2268,7 @@ Pass `comparefn` if you try to sort anything but string.
 [license-image]: https://img.shields.io/badge/License-WTFPL%202.0-lightgrey.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/wtfjs
 [npm-image]: https://img.shields.io/npm/v/wtfjs.svg?style=flat-square
+[patreon-url]: https://patreon.com/denysdovhan
+[patreon-image]: https://img.shields.io/badge/support-patreon-F96854.svg?style=flat-square
+[bmc-url]: https://patreon.com/denysdovhan
+[bmc-image]: https://img.shields.io/badge/support-buymeacoffee-222222.svg?style=flat-square

@@ -7,7 +7,7 @@
 
 Le JavaScript est un langage formidable! Il possède une syntaxe simple, un grand écosystème et, le plus important de tout, une immense communauté.
 
-En même temps, nous savous tous que le JavaScript est un langage assez amusant comprenant des aspects plus complexes que d'autres. Certains d'entre eux peuvent rapidement faire de notre travail quotidien un enfer, tout comme d'autres peuvent nous faire rire aux éclats.
+En même temps, nous savons tous que le JavaScript est un langage assez amusant comprenant des aspects plus complexes que d'autres. Certains d'entre eux peuvent rapidement faire de notre travail quotidien un enfer, tout comme d'autres peuvent nous faire rire aux éclats.
 
 L'idée originale de WTFJS appartient à [Brian Leroux](https://twitter.com/brianleroux). Cette liste est fortement inspirée par son discours [**“WTFJS”** at dotJS 2012](https://www.youtube.com/watch?v=et8xNAc2ic8):
 
@@ -39,8 +39,7 @@ Actuellement, il existe des traductions de ** wtfjs ** pour les langues suivante
 <!-- prettier-ignore-start -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-# Table des matières
+# Table of Contents
 
 - [💪🏻 Motivation](#-motivation)
 - [✍🏻 Notation](#-notation)
